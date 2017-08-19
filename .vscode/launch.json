@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {     
+    "name": "Python",
+    "type": "python",
+    //"pythonPath":"${config.python.pythonPath}", 
+    "request": "launch",
+    "stopOnEntry": true,
+    "console": "none",
+    "cwd": "${workspaceRoot}",
+    "debugOptions": [
+        "WaitOnAbnormalExit",
+        "WaitOnNormalExit",
+        "RedirectOutput"
+    ],
+    "env": {},
+    "program": "${workspaceRoot}/play.py",
+    "args":["--color","black"]
+        }
+    ]
+}
