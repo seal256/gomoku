@@ -7,7 +7,7 @@ See crazy.py for example.
 
 To start game with your AI player run
 ```
-pyhton play.py --player players.player_file_name --color color_for_ai
+python play.py --player players.player_file_name --color color_for_ai
 ```
 
 Note that black is always first to move.
