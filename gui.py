@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-import Tkinter
+try:
+    import Tkinter as tkinter
+except ImportError:
+    import tkinter as tkinter
 import math
 import time
 
@@ -13,10 +16,10 @@ class Point(object):
         self.pixel_y = 30 + 30 * self.y
 
 
-class BoardCanvas(Tkinter.Canvas):
+class BoardCanvas(tkinter.Canvas):
     def __init__(self, master=None, height=0, width=0):
         self.board_size = 15    
-        Tkinter.Canvas.__init__(self, master, height=height, width=width)
+        tkinter.Canvas.__init__(self, master, height=height, width=width)
         self.init_board_points()    
         self.init_board_canvas()
 
@@ -63,10 +66,10 @@ class BoardCanvas(Tkinter.Canvas):
         self.create_text(240, 550, text=text, tag="text_tag")
 
 
-class BoardFrame(Tkinter.Frame):
+class BoardFrame(tkinter.Frame):
     def __init__(self, master=None):
-        Tkinter.Frame.__init__(self, master)
-        self.board_label_frame = Tkinter.LabelFrame(self, text="Gomoku", padx=5, pady=5)
+        tkinter.Frame.__init__(self, master)
+        self.board_label_frame = tkinter.LabelFrame(self, text="Gomoku", padx=5, pady=5)
         self.board_label_frame.pack()
 
 
@@ -80,7 +83,7 @@ class BoardGame(object):
         self.game = game
         self.player = player
 
-        window = Tkinter.Tk()
+        window = tkinter.Tk()
         self.board_frame = BoardFrame(window)
         self.board_canvas = BoardCanvas(self.board_frame.board_label_frame, height=600, width=480)
 
