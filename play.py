@@ -14,7 +14,6 @@ if __name__ == '__main__':
     player = import_module(args.player).player() # call player class constructor
     game = Gomoku()
     board = BoardGame(game, player, args.color)
-    #print "done"
 
 
 

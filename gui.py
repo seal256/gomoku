@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-try:
-    import Tkinter as tkinter
-except ImportError:
-    import tkinter as tkinter
+import tkinter
 import math
 import time
 
