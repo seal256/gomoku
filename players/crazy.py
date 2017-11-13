@@ -13,6 +13,9 @@ class player(object):
                 if game.board[x][y] is None:
                     available.append((x, y))
 
+        if len(available) == 0:
+            return None
+        
         n = randint(0, len(available) - 1)
         return available[n]
 

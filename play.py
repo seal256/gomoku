@@ -3,7 +3,7 @@
 import argparse
 from importlib import import_module
 from gui import BoardGame
-from game import Gomoku
+from game import LineGame
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Gomoku game interface.')
@@ -12,7 +12,7 @@ if __name__ == '__main__':
     args = parser.parse_args() 
 
     player = import_module(args.player).player() # call player class constructor
-    game = Gomoku()
+    game = LineGame(3, 3)
     board = BoardGame(game, player, args.color)
 
 

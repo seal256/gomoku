@@ -15,16 +15,18 @@ class Game(object):
         """Check if this is a winnig game state."""
         raise NotImplementedError
         
-class Gomoku(Game):
+class LineGame(Game):
     """Gomoku game rules implementation
 
     Please note that board x coordinate is horisontal from left to right, 
     board y coordinate is vertical from top to bottom."""
 
-    def __init__(self):
-        self.board_size = 15
+    def __init__(self, board_size, win_line_len):
+        self.board_size = board_size
+        self.win_line_len = win_line_len
         self.tokens = ['x', 'o'] # symbols for black and white. Empty cell is None
         self.clean()
+        self.max_moves = self.board_size * self.board_size
         
     def clean(self):
         self.moves = []
@@ -62,9 +64,9 @@ class Gomoku(Game):
         return True
 
     def check_win(self):
-        """Check if this is a winnig game state (eg we have a line of length 5 for current player)."""
+        """Check if this is a winnig game state (eg we have a line of winning length for current player)."""
 
-        max_len = 5 # length of line to win
+        max_len = self.win_line_len # length of line to win
         curr_tok = self.tokens[self.current_player()]
 
         # check columns
@@ -123,5 +125,7 @@ class Gomoku(Game):
                     if(line_len == max_len):
                         return True
 
-
+        if len(self.moves) == self.max_moves: # draw
+            return None
+        
         return False

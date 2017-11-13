@@ -14,8 +14,8 @@ class Point(object):
 
 
 class BoardCanvas(tkinter.Canvas):
-    def __init__(self, master=None, height=0, width=0):
-        self.board_size = 15    
+    def __init__(self, master=None, height=0, width=0, board_size=15):
+        self.board_size = board_size    
         tkinter.Canvas.__init__(self, master, height=height, width=width)
         self.init_board_points()    
         self.init_board_canvas()
@@ -82,7 +82,7 @@ class BoardGame(object):
 
         window = tkinter.Tk()
         self.board_frame = BoardFrame(window)
-        self.board_canvas = BoardCanvas(self.board_frame.board_label_frame, height=600, width=480)
+        self.board_canvas = BoardCanvas(self.board_frame.board_label_frame, height=600, width=480, board_size=self.game.board_size)
 
         # bind left mouse button click event
         self.board_canvas.bind('<Button-1>', self.click_event)  
@@ -99,6 +99,10 @@ class BoardGame(object):
 
 
     def process_move(self, move):
+        #if move is None:
+        #    self.board_canvas.print_message("Draw")
+        #    self.board_canvas.unbind('<Button-1>')
+        #    return None
 
         # check and record move, if correct
         if not self.game.check_move(move): 
@@ -111,13 +115,25 @@ class BoardGame(object):
 
         # display move on board
         self.board_canvas.place_move(move, player_color)
+        #self.board_canvas.print_message("Player " + player_color + " move " + str(move))
+        #time.sleep(0.1)
+        self.board_canvas.print_message("") # clear error message if any
         
-        # check if this is the winning move
-        if self.game.check_win():
-            self.board_canvas.print_message("Player " + player_color + " wins")
-            self.board_canvas.unbind('<Button-1>')
+        # check if this is the winning move (or draw)
+        player_wins = self.game.check_win()
+        if player_wins:
+            self.finish_game("Player " + player_color + " wins")
+            return False
+
+        if player_wins is None: # draw
+            self.finish_game("Draw")
+            return False
 
         return True
+
+    def finish_game(self, message):
+        self.board_canvas.print_message(message)
+        self.board_canvas.unbind('<Button-1>')
 
     def click_event(self, event): 
         """Wait for human to make a move, then palce computer move"""
