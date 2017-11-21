@@ -1,3 +1,4 @@
+from copy import deepcopy
 
 class Game(object):
     """Abstract inrterface for game rules.
@@ -14,7 +15,23 @@ class Game(object):
     def check_win(self):
         """Check if this is a winnig game state."""
         raise NotImplementedError
-        
+
+class GameState:
+    """Keeps only game state, ignoring move history."""
+
+    def __init__(self, board_size, default_token):
+        self.board_size = board_size
+        self.clean(default_token)
+
+    def clean(self, default_token):
+        self.board = default_token * (self.board_size * self.board_size)
+
+    def update(self, move, token):
+        self.board[move[0] * self.board_size + move[1]] = token
+
+    def get_token(self, move):
+        return self.board[move[0] * self.board_size + move[1]]
+
 class LineGame(Game):
     """Gomoku game rules implementation
 
@@ -22,19 +39,23 @@ class LineGame(Game):
     board y coordinate is vertical from top to bottom."""
 
     def __init__(self, board_size, win_line_len):
-        self.board_size = board_size
-        self.win_line_len = win_line_len
         self.tokens = ['x', 'o'] # symbols for black and white. Empty cell is None
+        self.no_token = '.' # empty cell token
+        self.board_size = board_size
+        self.game_state = GameState(self.board_size, self.no_token)
+
+        self.win_line_len = win_line_len
         self.clean()
         self.max_moves = self.board_size * self.board_size
         
     def clean(self):
+        self.game_state.clean(self.no_token)
         self.moves = []
-        self.board = []
+        self.valid_moves = set()
+        
         for x in range(self.board_size):
-            self.board.append([])
-            for _ in range(self.board_size):
-                self.board[x].append(None)
+            for y in range(self.board_size):
+                self.valid_moves.add((x,y))
         
     def current_player(self):
         """Number of current player (ie who was the last to move). 0 is black, 1 is white. We assume balck is always first to move."""
@@ -42,10 +63,25 @@ class LineGame(Game):
             return 1
         return 0
 
+    def current_player_token(self):
+        return self.tokens[self.current_player()]
+
     def add_move(self, move):
         """Record new move."""
         self.moves.append(move)
-        self.board[move[0]][move[1]] = self.tokens[self.current_player()]
+        self.valid_moves.pop(move)
+        self.game_state.update(move, self.current_player_token())
+
+    def get_valid_moves(self):
+        return self.valid_moves
+
+    def get_current_state(self):
+        return (deepcopy(self.game_state), self.current_player())
+
+    #def get_successor_state(self, board, move, current_player):
+    #    board = deepcopy(self.game_state)
+    #    board[move[0]][move[1]] = self.tokens[current_player]
+    #    return board
 
     def check_move(self, move):
         """Check if the move is valid and records it. Move is a pair of integer coordiantes eg (2, 3)."""
@@ -57,7 +93,7 @@ class LineGame(Game):
             return False
 
         # Already on the board
-        if self.board[move[0]][move[1]] is not None:
+        if self.game_state.get_token(move) is not self.no_token:
             return False
 
         self.add_move(move)
@@ -73,7 +109,7 @@ class LineGame(Game):
         for nrow in range(self.board_size):
             line_len = 0
             for ncol in range(self.board_size):
-                if self.board[nrow][ncol] == curr_tok:
+                if self.game_state.get_token((nrow, ncol)) == curr_tok:
                     line_len += 1
                 else:
                     line_len = 0
@@ -84,7 +120,7 @@ class LineGame(Game):
         for ncol in range(self.board_size):
             line_len = 0
             for nrow in range(self.board_size):
-                if self.board[nrow][ncol] == curr_tok:
+                if self.game_state.get_token((nrow, ncol)) == curr_tok:
                     line_len += 1
                 else:
                     line_len = 0
@@ -101,7 +137,7 @@ class LineGame(Game):
             for n in range(0, diag_len):
                     nrow = x_start + n
                     ncol = y_start + n
-                    if self.board[nrow][ncol] == curr_tok:
+                    if self.game_state.get_token((nrow, ncol)) == curr_tok:
                         line_len += 1
                     else:
                         line_len = 0
@@ -118,7 +154,7 @@ class LineGame(Game):
             for n in range(0, diag_len):
                     nrow = x_start - n
                     ncol = y_start + n
-                    if self.board[nrow][ncol] == curr_tok:
+                    if self.game_state.get_token((nrow, ncol)) == curr_tok:
                         line_len += 1
                     else:
                         line_len = 0
