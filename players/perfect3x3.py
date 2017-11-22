@@ -6,6 +6,10 @@ class player(object):
         self.state_val = pickle.load(open(fname, 'rb'))        
 
     def get_move(self, game):
+        reverse_val = False
+        if game.current_player() == 0:
+            reverse_val = True
+
         best_val = -10.
         best_move = None
         for move in game.get_valid_moves():
@@ -17,7 +21,9 @@ class player(object):
                 game.delete_move()
                 continue
 
-            val = self.state_val[state]    
+            val = self.state_val[state]
+            if reverse_val:
+                val = -val    
             if val > best_val:
                 best_val = val
                 best_move = move
