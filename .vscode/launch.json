@@ -15,8 +15,9 @@
         "RedirectOutput"
     ],
     "env": {},
-    "program": "${workspaceRoot}/play.py",
-    "args":["--color","black"]
+    "program": "${file}"
+    //"program": "${workspaceRoot}/play.py",
+    //"args":["--color","black"]
         }
     ]
 }

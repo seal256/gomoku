@@ -24,13 +24,21 @@ class GameState:
         self.clean(default_token)
 
     def clean(self, default_token):
-        self.board = default_token * (self.board_size * self.board_size)
+        self.board = [default_token] * (self.board_size * self.board_size)
 
     def update(self, move, token):
-        self.board[move[0] * self.board_size + move[1]] = token
+        self.board[move[1] * self.board_size + move[0]] = token
 
     def get_token(self, move):
-        return self.board[move[0] * self.board_size + move[1]]
+        return self.board[move[1] * self.board_size + move[0]]
+
+    def __str__(self):
+        s = ''
+        for x in range(self.board_size):
+            for y in range(self.board_size):
+                s += str(self.get_token((x,y)))
+            s += '\n'
+        return s
 
 class LineGame(Game):
     """Gomoku game rules implementation
@@ -69,14 +77,20 @@ class LineGame(Game):
     def add_move(self, move):
         """Record new move."""
         self.moves.append(move)
-        self.valid_moves.pop(move)
+        self.valid_moves.discard(move)
         self.game_state.update(move, self.current_player_token())
 
-    def get_valid_moves(self):
-        return self.valid_moves
+    def delete_move(self):
+        """Delete last move."""
+        move = self.moves.pop()
+        self.valid_moves.add(move)
+        self.game_state.update(move, self.no_token)
 
-    def get_current_state(self):
-        return (deepcopy(self.game_state), self.current_player())
+    def get_valid_moves(self):
+        return deepcopy(self.valid_moves)
+
+    def get_state_hash(self):
+        return ''.join(self.game_state.board)
 
     #def get_successor_state(self, board, move, current_player):
     #    board = deepcopy(self.game_state)
