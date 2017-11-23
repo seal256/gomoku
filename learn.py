@@ -1,3 +1,4 @@
+from __future__ import print_function
 import pickle
 from game import LineGame
 from learning.game_tree import FullGameTree

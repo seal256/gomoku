@@ -40,6 +40,9 @@ class GameState:
             s += '\n'
         return s
 
+    def hash(self):
+        return ''.join(self.board)
+
 class LineGame(Game):
     """Gomoku game rules implementation
 
@@ -90,7 +93,7 @@ class LineGame(Game):
         return deepcopy(self.valid_moves)
 
     def get_state_hash(self):
-        return ''.join(self.game_state.board)
+        return self.game_state.hash()
 
     #def get_successor_state(self, board, move, current_player):
     #    board = deepcopy(self.game_state)
